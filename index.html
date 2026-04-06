@@ -1,0 +1,66 @@
+﻿<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>QueroPassagem – Passagens de Ônibus Baratas</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<header>
+  <a href="#" class="logo">
+    Quero <small>Passagem</small>
+  </a>
+
+  <nav aria-label="Menu principal">
+    <a href="#" class="ativo">Passagens</a>
+    <a href="#">Hotéis <span class="badge-novo">Novo!</span></a>
+  </nav>
+
+  <aside class="header-acoes">
+    <button class="btn-ajuda">? Central de Ajuda</button>
+    <button class="btn-entrar">ENTRAR</button>
+  </aside>
+</header>
+
+<section class="hero" aria-label="Busca de passagens">
+  <article class="hero-conteudo">
+
+    <form class="busca" action="#" method="get">
+      <h2>Comprar Passagens de Ônibus</h2>
+
+      <label for="origem">Partindo de</label>
+      <input id="origem" type="text" name="origem" value="Curitiba, PR - TODOS" />
+
+      <label for="destino">Indo para</label>
+      <input id="destino" type="text" name="destino" value="São Paulo, SP - TODOS" />
+
+      <fieldset>
+        <legend class="sr-only">Datas</legend>
+        <p>
+          <label for="saida">Data Saída</label>
+          <input id="saida" type="date" name="saida" value="2026-04-06" />
+        </p>
+        <p>
+          <label for="retorno">Data Retorno</label>
+          <input id="retorno" type="date" name="retorno" />
+        </p>
+      </fieldset>
+
+      <button type="submit" class="btn-buscar">BUSCAR PASSAGEM</button>
+    </form>
+
+    <article class="hero-texto">
+      <h1>VAI DE <em>ÔNIBUS</em></h1>
+      <p>Vai de Quero Passagem</p>
+      <ul>
+        <li class="verde">✓ RA1000</li>
+        <li>8.7 no ReclameAqui</li>
+        <li>+30 mi de compras</li>
+      </ul>
+    </article>
+
+  </article>
+</section>
+
