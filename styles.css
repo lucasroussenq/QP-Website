@@ -1,0 +1,296 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+}
+
+body {
+    background: #f5f7fa;
+    color: #1a1a1a;
+}
+    header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 15px 60px;
+        background: #fff;
+        border-bottom: 1px solid #eee;
+
+}
+
+.logo img {
+    height: 60px;
+}
+
+.container {
+    margin: auto;
+    max-width: 1400px;
+    padding: 0 120px;
+    nav {
+        display: flex;
+        align-items: center;
+    }
+}
+nav {
+    display: flex;
+    align-items: center;
+}
+
+nav a {
+    margin: 0 15px;
+    text-decoration: none;
+    color: #333;
+    font-size: 15px;
+}
+
+nav .ativo {
+    color: #2d5bff;
+    font-weight: bold;
+    border-bottom: 2px solid #2d5bff;
+    padding-bottom: 5px;
+}
+
+.badge-novo {
+    background: #22c55e;
+    color: white;
+    font-size: 10px;
+    padding: 2px 6px;
+    border-radius: 5px;
+    margin-left: 5px;
+}
+
+.header-acoes button {
+    margin-left: 10px;
+    padding: 8px 14px;
+    border: none;
+    cursor: pointer;
+    font-size: 13px;
+}
+
+.btn-ajuda {
+    background: transparent;
+    color: #333;
+}
+
+.btn-entrar {
+    background: #2d5bff;
+    color: white;
+    border-radius: 6px;
+    font-weight: bold;
+}
+
+.hero {
+    background: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)),
+    url("https://assets.queropassagem.com.br/public/Upload/fundo/home_fundo_1.jpg?1775569790&quot;);");
+    background-size: cover;
+    background-position: center;
+    padding: 70px 60px;
+}
+
+.hero-conteudo {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.busca {
+    background: #0a2a66;
+    padding: 25px;
+    border-radius: 12px;
+    width: 350px;
+    color: white;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+}
+
+.busca h2 {
+    margin-bottom: 15px;
+}
+
+.busca label {
+    font-size: 12px;
+}
+
+.busca input {
+    width: 100%;
+    padding: 10px;
+    margin: 5px 0 10px;
+    border-radius: 6px;
+    border: none;
+}
+
+fieldset {
+    display: flex;
+    gap: 10px;
+    border: none;
+}
+
+fieldset p {
+    flex: 1;
+}
+
+.btn-buscar {
+    width: 100%;
+    padding: 12px;
+    background: #2d5bff;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-weight: bold;
+    margin-top: 10px;
+    cursor: pointer;
+}
+
+.btn-buscar:hover {
+    background: #1d4ed8;
+}
+
+/* TEXTO HERO */
+.hero-texto {
+    color: white;
+    max-width: 400px;
+}
+
+.hero-texto h1 {
+    font-size: 42px;
+    margin-bottom: 10px;
+}
+
+.hero-texto em {
+    color: #2d5bff;
+    font-style: normal;
+}
+
+.hero-texto ul {
+    list-style: none;
+    margin-top: 10px;
+}
+
+.hero-texto li {
+    margin-bottom: 5px;
+}
+
+.verde {
+    color: #22c55e;
+}
+
+/* BARRA INFO */
+aside {
+    display: flex;
+    justify-content: space-around;
+    background: #eee;
+    padding: 15px;
+}
+
+aside p strong {
+    display: block;
+}
+
+.viações {
+    text-align: center;
+    padding: 40px;
+}
+
+.viações h2 {
+    font-size: 22px;
+    font-weight: 600;
+}
+
+.viações p {
+    color: #6b7280;
+    margin-top: 5px;
+}
+
+.grid-viacoes {
+    list-style: none;
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 25px;
+    margin-top: 30px;
+}
+
+.grid-viacoes li {
+    background: #fff;
+    border-radius: 12px;
+    padding: 20px;
+    border: 1px solid #e5e7eb;
+    text-align: center;
+    transition: 0.2s;
+}
+
+.grid-viacoes li:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+}
+
+.grid-viacoes img {
+    height: 30px;
+    object-fit: contain;
+    margin-bottom: 10px;
+}
+
+.grid-viacoes span {
+    display: block;
+    font-size: 13px;
+    color: #6b7280;
+}
+
+.destinos {
+    padding: 40px;
+    text-align: center;
+}
+
+.destinos h2 {
+    font-size: 22px;
+}
+
+.destinos p {
+    color: #6b7280;
+    margin-top: 5px;
+}
+
+.cards-destinos {
+    display: flex;
+    gap: 30px;
+    justify-content: center;
+    margin-top: 30px;
+}
+
+.card-destino {
+    width: 320px;
+    background: white;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+}
+
+.card-destino img {
+    width: 100%;
+    height: 180px;
+    object-fit: cover;
+}
+
+.card-destino article {
+    padding: 15px;
+    text-align: left;
+}
+
+.card-destino h3 {
+    font-size: 18px;
+    margin-bottom: 10px;
+}
+
+.card-destino table {
+    width: 100%;
+    font-size: 13px;
+}
+
+.card-destino td {
+    padding: 4px 0;
+}
+
+.card-destino td:last-child {
+    text-align: right;
+    font-weight: bold;
+}
+

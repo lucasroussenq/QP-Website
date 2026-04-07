@@ -3,44 +3,46 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>QueroPassagem – Passagens de Ônibus Baratas</title>
+  <title>Quero Passagem: Passagem de ônibus sem sair de casa</title>
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
 
 <header>
   <a href="#" class="logo">
-    Quero <small>Passagem</small>
-  </a>
-
+    <a href="#" class="logo">
+      <img src="https://assets.queropassagem.com.br/static/Images/Logos/logo_nova_grande.png" alt="Quero Passagem">
+    </a>
   <nav aria-label="Menu principal">
+    <div class="container">
     <a href="#" class="ativo">Passagens</a>
     <a href="#">Hotéis <span class="badge-novo">Novo!</span></a>
   </nav>
 
   <aside class="header-acoes">
-    <button class="btn-ajuda">? Central de Ajuda</button>
+    <button class="btn-ajuda">Central de Ajuda</button>
     <button class="btn-entrar">ENTRAR</button>
   </aside>
-</header>
+    <div/>
+     </header>
 
 <section class="hero" aria-label="Busca de passagens">
+  <div class="container">
   <article class="hero-conteudo">
-
     <form class="busca" action="#" method="get">
       <h2>Comprar Passagens de Ônibus</h2>
 
       <label for="origem">Partindo de</label>
-      <input id="origem" type="text" name="origem" value="Curitiba, PR - TODOS" />
+      <input id="origem" type="text" name="origem" value="" />
 
       <label for="destino">Indo para</label>
-      <input id="destino" type="text" name="destino" value="São Paulo, SP - TODOS" />
+      <input id="destino" type="text" name="destino" value="" />
 
       <fieldset>
         <legend class="sr-only">Datas</legend>
         <p>
           <label for="saida">Data Saída</label>
-          <input id="saida" type="date" name="saida" value="2026-04-06" />
+          <input id="saida" type="date" name="saida" value="" />
         </p>
         <p>
           <label for="retorno">Data Retorno</label>
@@ -51,16 +53,162 @@
       <button type="submit" class="btn-buscar">BUSCAR PASSAGEM</button>
     </form>
 
-    <article class="hero-texto">
-      <h1>VAI DE <em>ÔNIBUS</em></h1>
-      <p>Vai de Quero Passagem</p>
-      <ul>
-        <li class="verde">✓ RA1000</li>
-        <li>8.7 no ReclameAqui</li>
-        <li>+30 mi de compras</li>
-      </ul>
-    </article>
-
-  </article>
+   </article>
+  </div>
 </section>
+
+<aside class="barra de confiança">
+ <article>
+    <p><strong>Viagens seguras</strong><span>Mais de 30 milhões de compras</span></p>
+ </article>
+  </article>
+  <p><strong>Pagamento</strong><span>Pague com Pix, Nupay ou em até 12x
+</span></p>
+
+
+  <article>
+   <p><strong>Cancelamento</strong><span>Passagens flexíveis e atendimento personalizado</span></p>
+   </article>
+   </aside>
+
+<section class="viações" aria-labelledby="titulo-viacoes">
+  <h2 id="titulo-viacoes"> Passagens de Ônibus Baratas: Viações de Ônibus</h2>
+  <p>A sua passagem de ônibus na viação de sua preferência</p>
+
+  <ul class="grid-viacoes">
+    <li>
+      <img src="https://assets.queropassagem.com.br/public/Upload/autoviacao/viacao-cometa.svg">
+      <span>Viação Cometa</span>
+    </li>
+
+    <li>
+      <img src="https://assets.queropassagem.com.br/public/Upload/autoviacao/viacao-util.svg">
+      <span>Viação UTIL</span>
+    </li>
+
+    <li>
+      <img src="https://assets.queropassagem.com.br/public/Upload/autoviacao/viacao-expresso-guanabara.svg">
+      <span>Viação Expresso Guanabara</span>
+    </li>
+
+    <li>
+      <img src="https://assets.queropassagem.com.br/public/Upload/autoviacao/viacao-reunidas-paulista.svg">
+      <span>Viação Reunidas Paulista</span>
+    </li>
+
+    <li>
+      <img src="https://assets.queropassagem.com.br/public/Upload/autoviacao/viacao-1001.svg">
+      <span>Viação 1001</span>
+    </li>
+
+    <li>
+      <img src="https://assets.queropassagem.com.br/public/Upload/autoviacao/viacao-catarinense.svg">
+      <span>Viação Catarinense</span>
+    </li>
+
+    <li>
+      <img src="https://assets.queropassagem.com.br/public/Upload/autoviacao/viacao-aguia-branca.svg">
+      <span>Viação Águia Branca</span>
+    </li>
+
+    <li>
+      <img src="https://assets.queropassagem.com.br/public/Upload/autoviacao/viacao-gontijo.svg">
+      <span>Viação Gontijo</span>
+    </li>
+
+    <li>
+      <img src="https://assets.queropassagem.com.br/public/Upload/autoviacao/viacao-eucatur.svg">
+      <span>Viação Eucatur</span>
+    </li>
+
+    <li>
+      <img src="https://assets.queropassagem.com.br/public/Upload/autoviacao/viacao-progresso.svg">
+      <span>Viação Progresso</span>
+    </li>
+  </ul>
+  </section>
+
+<section class="destinos" aria-labelledby="titulo-destinos">
+
+  <h2 id="titulo-destinos">Escolha seu destino</h2>
+  <p>São mais de 5 mil destinos em todo o país para escolher sem sair de casa.</p>
+
+  <ul class="cards-destinos">
+
+    <li class="card-destino">
+      <img src="https://assets.queropassagem.com.br/public/Upload/cidades/1a.jpg" alt="São Paulo" />
+      <article>
+        <h3>São Paulo</h3>
+        <table>
+          <thead>
+          <tr>
+            <th>Partindo de</th>
+            <th>A partir de</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr><td>Rio de Janeiro, RJ</td><td>R$ 104</td></tr>
+          <tr><td>Belo Horizonte, MG</td><td>R$ 139</td></tr>
+          <tr><td>Ribeirão Preto, SP</td><td>R$ 144</td></tr>
+          <tr><td>Sorocaba, SP</td><td>R$ 44</td></tr>
+          </tbody>
+        </table>
+      </article>
+    </li>
+
+    <li class="card-destino">
+      <img src="https://assets.queropassagem.com.br/public/Upload/cidades/57a.jpg" />
+      <article>
+        <h3>Rio De Janeiro</h3>
+        <table>
+          <tbody>
+          <tr><td>São Paulo, SP</td><td>R$ 104</td></tr>
+          <tr><td>Belo Horizonte, MG</td><td>R$ 69</td></tr>
+          <tr><td>Cabo Frio, RJ</td><td>R$ 75</td></tr>
+          <tr><td>Macaé, RJ</td><td>R$ 89</td></tr>
+          </tbody>
+        </table>
+      </article>
+    </li>
+
+    <li class="card-destino">
+      <img src="https://assets.queropassagem.com.br/public/Upload/cidades/55a.jpg" />
+      <article>
+        <h3>Curitiba</h3>
+        <table>
+          <tbody>
+          <tr><td>Florianópolis, SC</td><td>R$ 72</td></tr>
+          <tr><td>Porto Alegre, RS</td><td>R$ 27</td></tr>
+          <tr><td>Joinville, SC</td><td>R$ 38</td></tr>
+          <tr><td>Rio de Janeiro, RJ</td><td>R$ 22</td></tr>
+          </tbody>
+        </table>
+      </article>
+    </li>
+
+  </ul>
+
+</section>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
