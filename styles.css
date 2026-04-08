@@ -1,3 +1,4 @@
+
 * {
     margin: 0;
     padding: 0;
@@ -5,50 +6,61 @@
     font-family: Arial, sans-serif;
 }
 
-body {
-    background: #f5f7fa;
-    color: #1a1a1a;
+:root {
+    --blue-dark:  #1a2e6e;
+    --blue-main: #1a2e6e;
+    --blue-light: #e8eeff;
+    --yellow:     #f5c518;
+    --text-dark: #000000;
+    --text-gray:  #6b7280;
+    --border:     #e5e7eb;
+    --white:      #ffffff;
+    --bg-light:   #f5f7fa;
 }
-    header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 15px 60px;
-        background: #fff;
-        border-bottom: 1px solid #eee;
 
+body {
+    background: var(--bg-light);
+    color: var(--text-dark);
+}
+
+a { text-decoration: none; color: inherit; }
+
+/* ===========================
+   HEADER
+=========================== */
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 60px;
+    background: #fff;
+    border-bottom: 1px solid #eee;x''
 }
 
 .logo img {
     height: 60px;
 }
 
-.container {
-    margin: auto;
-    max-width: 1400px;
-    padding: 0 120px;
-    nav {
-        display: flex;
-        align-items: center;
-    }
-}
-nav {
+header nav {
     display: flex;
     align-items: center;
+    gap: 20px;
 }
 
-nav a {
-    margin: 0 15px;
+header nav a {
     text-decoration: none;
     color: #333;
     font-size: 15px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
 }
 
-nav .ativo {
-    color: #2d5bff;
+header nav a.ativo {
+    color: var(--blue-main);
     font-weight: bold;
-    border-bottom: 2px solid #2d5bff;
-    padding-bottom: 5px;
+    border-bottom: 2px solid var(--blue-main);
+    padding-bottom: 4px;
 }
 
 .badge-novo {
@@ -57,11 +69,15 @@ nav .ativo {
     font-size: 10px;
     padding: 2px 6px;
     border-radius: 5px;
-    margin-left: 5px;
+}
+
+.header-acoes {
+    display: flex;
+    align-items: center;
+    gap: 10px;
 }
 
 .header-acoes button {
-    margin-left: 10px;
     padding: 8px 14px;
     border: none;
     cursor: pointer;
@@ -74,26 +90,30 @@ nav .ativo {
 }
 
 .btn-entrar {
-    background: #2d5bff;
+    background: var(--blue-main);
     color: white;
     border-radius: 6px;
     font-weight: bold;
 }
 
-.hero {
-    background: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)),
-    url("https://assets.queropassagem.com.br/public/Upload/fundo/home_fundo_1.jpg?1775569790&quot;);");
-    background-size: cover;
-    background-position: center;
+/* ===========================
+   HERO / TOP BANNER
+=========================== */
+.top-banner {
+    background: url('https://assets.queropassagem.com.br/public/Upload/fundo/home_fundo_1.jpg') center/cover no-repeat;
     padding: 70px 60px;
 }
 
-.hero-conteudo {
+.top-banner-conteudo {
     display: flex;
-    justify-content: space-between;
+    justify-content: flex-start;
     align-items: center;
 }
-
+.container {
+    margin: auto;
+    max-width: 1400px;
+    padding: 0 120px;
+}
 .busca {
     background: #0a2a66;
     padding: 25px;
@@ -105,155 +125,174 @@ nav .ativo {
 
 .busca h2 {
     margin-bottom: 15px;
+    font-size: 16px;
+    text-align: center;
 }
 
 .busca label {
     font-size: 12px;
+    display: block;
+    margin-bottom: 4px;
+    color: #aabce8;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
 }
 
 .busca input {
     width: 100%;
     padding: 10px;
-    margin: 5px 0 10px;
+    margin: 0 0 12px;
     border-radius: 6px;
     border: none;
+    font-size: 14px;
+    outline: none;
 }
 
 fieldset {
     display: flex;
     gap: 10px;
     border: none;
+    margin-bottom: 10px;
 }
 
 fieldset p {
     flex: 1;
 }
 
+fieldset input {
+    margin-bottom: 0 !important;
+}
+
 .btn-buscar {
     width: 100%;
     padding: 12px;
-    background: #2d5bff;
+    background: var(--blue-main);
     color: white;
     border: none;
     border-radius: 8px;
     font-weight: bold;
     margin-top: 10px;
     cursor: pointer;
+    font-size: 14px;
+    letter-spacing: 0.5px;
 }
 
 .btn-buscar:hover {
     background: #1d4ed8;
 }
 
-/* TEXTO HERO */
-.hero-texto {
-    color: white;
-    max-width: 400px;
-}
-
-.hero-texto h1 {
-    font-size: 42px;
-    margin-bottom: 10px;
-}
-
-.hero-texto em {
-    color: #2d5bff;
-    font-style: normal;
-}
-
-.hero-texto ul {
-    list-style: none;
-    margin-top: 10px;
-}
-
-.hero-texto li {
-    margin-bottom: 5px;
-}
-
-.verde {
-    color: #22c55e;
-}
-
-/* BARRA INFO */
+/* ===========================
+   BARRA DE CONFIANÇA
+=========================== */
 aside {
     display: flex;
     justify-content: space-around;
     background: #eee;
-    padding: 15px;
+    padding: 15px 60px;
+}
+
+aside p {
+    display: flex;
+    flex-direction: column;
 }
 
 aside p strong {
     display: block;
+    font-size: 13px;
+    color: var(--text-dark);
 }
 
+aside p span {
+    font-size: 12px;
+    color: #555;
+}
+
+/* ===========================
+   VIAÇÕES
+=========================== */
 .viações {
+    background: var(--white);
     text-align: center;
-    padding: 40px;
+    padding: 40px 60px;
 }
 
 .viações h2 {
     font-size: 22px;
-    font-weight: 600;
+    font-weight: 950;
+    color: var(--blue-dark);
+    margin-bottom: 6px;
 }
 
 .viações p {
-    color: #6b7280;
-    margin-top: 5px;
+    color: var(--text-gray);
+    margin-bottom: 30px;
 }
 
 .grid-viacoes {
     list-style: none;
     display: grid;
     grid-template-columns: repeat(5, 1fr);
-    gap: 25px;
-    margin-top: 30px;
+    gap: 20px;
+    max-width: 1200px;
+    margin: 0 auto;
 }
 
 .grid-viacoes li {
-    background: #fff;
+    background: var(--white);
     border-radius: 12px;
     padding: 20px;
-    border: 1px solid #e5e7eb;
+    border: 1px solid var(--border);
     text-align: center;
-    transition: 0.2s;
+    transition: box-shadow 0.2s, transform 0.2s;
 }
 
 .grid-viacoes li:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+    box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+    transform: translateY(-2px);
 }
 
 .grid-viacoes img {
     height: 30px;
     object-fit: contain;
     margin-bottom: 10px;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 .grid-viacoes span {
     display: block;
     font-size: 13px;
-    color: #6b7280;
+    color: var(--text-gray);
 }
 
+/* ===========================
+   DESTINOS
+=========================== */
 .destinos {
-    padding: 40px;
+    background: var(--bg-light);
+    padding: 40px 60px;
     text-align: center;
 }
 
 .destinos h2 {
     font-size: 22px;
+    font-weight: 950;
+    color: var(--blue-dark);
+    margin-bottom: 6px;
 }
 
 .destinos p {
-    color: #6b7280;
-    margin-top: 5px;
+    color: var(--text-gray);
+    margin-bottom: 30px;
 }
 
 .cards-destinos {
+    list-style: none;
     display: flex;
     gap: 30px;
     justify-content: center;
-    margin-top: 30px;
+    margin-bottom: 20px;
 }
 
 .card-destino {
@@ -262,35 +301,246 @@ aside p strong {
     border-radius: 12px;
     overflow: hidden;
     box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+    text-align: left;
 }
 
 .card-destino img {
     width: 100%;
     height: 180px;
     object-fit: cover;
+    display: block;
 }
 
 .card-destino article {
     padding: 15px;
-    text-align: left;
 }
 
 .card-destino h3 {
     font-size: 18px;
+    font-weight: bold;
     margin-bottom: 10px;
+    color: var(--blue-dark);
 }
 
 .card-destino table {
     width: 100%;
     font-size: 13px;
+    border-collapse: collapse;
 }
 
 .card-destino td {
-    padding: 4px 0;
+    padding: 5px 0;
+    border-bottom: 1px solid var(--border);
+    color: var(--text-dark);
 }
 
 .card-destino td:last-child {
     text-align: right;
     font-weight: bold;
+    color: var(--blue-main);
+}
+
+.link-mais-destinos {
+    display: inline-block;
+    margin-top: 16px;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--blue-main);
+    letter-spacing: 0.5px;
+    border-bottom: 2px solid transparent;
+    transition: border-color 0.2s;
+}
+
+.link-mais-destinos:hover {
+    border-bottom-color: var(--blue-main);
+}
+
+/* ===========================
+   BANNER APP (imagem simples)
+=========================== */
+img[alt="Banner"] {
+    width: 100%;
+    display: block;
+}
+
+/* ===========================
+   TRECHOS
+=========================== */
+.trechos {
+    background: var(--white);
+    padding: 40px 60px;
+    text-align: center;
+}
+
+.trechos h2 {
+    font-size: 22px;
+    font-weight: 950;
+    color: var(--blue-dark);
+    margin-bottom: 6px;
+}
+
+.trechos > p {
+    color: var(--text-gray);
+    margin-bottom: 30px;
+}
+
+.grid-trechos {
+    list-style: none;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+    max-width: 1200px;
+    margin: 0 auto;
+    text-align: left;
+}
+
+.grid-trechos li {
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px 24px;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+    background: var(--white);
+}
+
+.grid-trechos table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+}
+
+.grid-trechos th {
+    color: var(--text-gray);
+    font-size: 12px;
+    font-weight: 600;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--border);
+    text-align: left;
+}
+
+.grid-trechos td {
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border);
+    color: var(--text-dark);
+}
+
+.grid-trechos td:last-child {
+    color: var(--blue-main);
+    font-weight: 500;
+}
+
+/* ===========================
+   PARCEIROS
+=========================== */
+.parceiros {
+    background: var(--bg-light);
+    display: flex;
+    align-items: center;
+    gap: 60px;
+    padding: 52px 60px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.parceiros-imagem {
+    position: relative;
+    border-radius: 12px;
+    overflow: hidden;
+    min-width: 500px;
+    height: 240px;
+    background: url('https://assets.queropassagem.com.br/static/Images/parceiro.png') center/cover no-repeat;
+}
+
+.parceiros-info {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+.parceiro-tipo h3 {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--blue-dark);
+    margin-bottom: 4px;
+}
+
+.parceiro-tipo p {
+    font-size: 14px;
+    color: var(--text-gray);
+    line-height: 1.5;
+}
+
+.btn-saiba-mais {
+    display: inline-block;
+    background: #f3f4f6;
+    color: black;
+    font-size: 14px;
+    font-weight: 600;
+    padding: 12px 24px;
+    border-radius: 8px;
+    text-align: center;
+    width: 250px;
+    transition: background 0.2s;
+}
+
+.btn-saiba-mais:hover {
+    background: var(--blue-dark);
+    color: white;
+}
+
+/* ===========================
+   NEWSLETTER
+=========================== */
+.newsletter {
+    background: var(--bg-light);
+    padding: 52px 40px;
+    text-align: center;
+}
+
+.newsletter h2 {
+    font-size: 20px;
+    font-weight: 950;
+    color: var(--blue-dark);
+    margin-bottom: 28px;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.newsletter-form {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+}
+
+.newsletter-form input {
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    font-size: 14px;
+    padding: 11px 16px;
+    outline: none;
+    width: 240px;
+    transition: border 0.2s;
+    background: white;
+}
+
+.newsletter-form input:focus {
+    border-color: var(--blue-main);
+}
+
+.newsletter-form button {
+    background: var(--blue-main);
+    color: white;
+    font-size: 14px;
+    font-weight: 600;
+    padding: 11px 24px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.newsletter-form button:hover {
+    background: var(--blue-dark);
 }
 
