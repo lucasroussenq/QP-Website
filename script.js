@@ -1,36 +1,31 @@
-document.querySelectorAll('.faq-pergunta').forEach(function(btn) {
+document.querySelectorAll('.faq-question').forEach(function(btn) {
     btn.addEventListener('click', function() {
-        const resposta = this.nextElementSibling;
-        const aberta = this.getAttribute('aria-expanded') === 'true';
+        var answer = this.nextElementSibling;
+        var isOpen = this.getAttribute('aria-expanded') === 'true';
 
-        document.querySelectorAll('.faq-pergunta').forEach(function(b) {
+        document.querySelectorAll('.faq-question').forEach(function(b) {
             b.setAttribute('aria-expanded', 'false');
-            b.nextElementSibling.classList.remove('aberta');
+            b.nextElementSibling.classList.remove('open');
         });
 
-        if (!aberta) {
+        if (!isOpen) {
             this.setAttribute('aria-expanded', 'true');
-            resposta.classList.add('aberta');
+            answer.classList.add('open');
         }
     });
 });
 
-const btnVerMais = document.getElementById('btn-ver-mais');
+var btnShowMore = document.getElementById('btn-show-more');
+var isExpanded = false;
 
-if (btnVerMais) {
-    let expandido = false;
+btnShowMore.addEventListener('click', function() {
+    var extras = document.querySelectorAll('.faq-extra');
 
-    btnVerMais.addEventListener('click', function() {
-        const extras = document.querySelectorAll('.faq-extra');
+    isExpanded = !isExpanded;
 
-        expandido = !expandido;
-
-        extras.forEach(function(item) {
-            item.classList.toggle('oculto');
-        });
-
-        btnVerMais.textContent = expandido
-            ? 'Ver menos ∧'
-            : 'Ver mais perguntas ∨';
+    extras.forEach(function(item) {
+        item.classList.toggle('hidden');
     });
-}
+
+    btnShowMore.textContent = isExpanded ? 'Ver menos' : 'Ver mais perguntas';
+});
