@@ -1,0 +1,5 @@
+{
+  "name": "crud-viacoes",
+  "description": "CRUD de viações com PHP e MySQL",
+  "require": {}
+}
