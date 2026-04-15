@@ -1,13 +1,14 @@
 <?php
 require 'db.php';
+$pdo = $pdo ?? null;
 
-function fetchAllBusCompanies(PDO $connection): array
+function fetchAllBusCompanies(PDO $pdo): array
 {
-    $query = $connection->query("SELECT * FROM bus_companies ORDER BY created_at DESC");
+    $query = $pdo->query("SELECT * FROM bus_companies ORDER BY created_at DESC");
     return $query->fetchAll();
 }
 
-$busCompanies = fetchAllBusCompanies($connection);
+$busCompanies = fetchAllBusCompanies($pdo);
 ?>
 
 <!DOCTYPE html>
@@ -32,6 +33,19 @@ $busCompanies = fetchAllBusCompanies($connection);
             align-items: center;
         }
 
+
+        .log-btn {
+            background: #1a2e6e;
+            color: white;
+            padding: 10px 16px;
+            text-decoration: none;
+            border-radius: 6px;
+            display: inline-block;
+            font-weight: bold;
+            transition: all 0.25s ease;
+            margin-inline-start: 900px;
+        }
+
         .btn {
             background: #1a2e6e;
             color: white;
@@ -52,6 +66,18 @@ $busCompanies = fetchAllBusCompanies($connection);
 
         /* CLICK (efeito pressionar) */
         .btn:active {
+            transform: scale(0.97);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .log-btn:hover {
+            background: #2d5bff;
+            transform: translateY(-2px) scale(1.03);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+        }
+
+        /* CLICK (efeito pressionar) */
+        .log-btn:active {
             transform: scale(0.97);
             box-shadow: 0 2px 4px rgba(0,0,0,0.2);
         }
@@ -155,6 +181,7 @@ $busCompanies = fetchAllBusCompanies($connection);
 
 <div class="header">
     <h1>Cadastro de Viações</h1>
+    <a href="logs.php" class="log-btn">Histórico de Alterações</a>
     <a href="create.php" class="btn">+ Nova Viação</a>
 </div>
 
@@ -176,6 +203,7 @@ $busCompanies = fetchAllBusCompanies($connection);
             <table>
                 <tr>
                     <th>ID</th>
+                    <th>Logo</th>
                     <th>Nome</th>
                     <th>URL</th>
                     <th>Cidade</th>
@@ -188,6 +216,14 @@ $busCompanies = fetchAllBusCompanies($connection);
                 <?php foreach ($busCompanies as $busCompany): ?>
                     <tr>
                         <td><?= $busCompany['id'] ?></td>
+
+                        <td>
+                            <?php if (!empty($busCompany['logo'])): ?>
+                                <img src="<?= $busCompany['logo'] ?>" style="width:60px;height:60px;object-fit:contain;border-radius:6px;">
+                            <?php else: ?>
+                                -
+                            <?php endif; ?>
+                        </td>
 
                         <td class="company-name">
                             <?= htmlspecialchars($busCompany['name']) ?>
@@ -239,3 +275,4 @@ $busCompanies = fetchAllBusCompanies($connection);
 
 </body>
 </html>
+

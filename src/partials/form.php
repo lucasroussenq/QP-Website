@@ -1,8 +1,17 @@
 <?php
-// Partial reutilizável: campos do formulário de viação
-// Usado em create.php e edit.php
-// $busCompany deve estar definido no contexto que inclui este arquivo
 ?>
+
+
+<div class="form-group">
+    <label for="logo">Logo</label>
+    <input
+            type="file"
+            id="logo"
+            name="logo"
+            accept="image/png, image/jpeg"
+    >
+</div>
+
 
 <div class="form-group">
     <label for="name">Nome da Viação</label>

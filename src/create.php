@@ -1,8 +1,9 @@
 <?php
 
-require 'db.php';
+require_once 'db.php';
+$pdo = $pdo ?? null;
 
-$errors     = [];
+$errors = [];
 $busCompany = [];
 
 function validateBusCompanyForm(array $formData): array
@@ -30,33 +31,86 @@ function validateBusCompanyForm(array $formData): array
     return $errors;
 }
 
-function saveBusCompany(PDO $connection, array $formData): void
+function uploadLogo(): ?string
 {
-    $statement = $connection->prepare("
-        INSERT INTO bus_companies (name, url, city, status)
-        VALUES (:name, :url, :city, :status)
+    if (!isset($_FILES['logo']) || $_FILES['logo']['error'] !== 0) {
+        return null;
+    }
+
+    $file = $_FILES['logo'];
+    $allowed = ['image/jpeg', 'image/png', 'image/jpg'];
+
+    if (!in_array($file['type'], $allowed)) {
+        return null;
+    }
+
+    if ($file['size'] > 2 * 1024 * 1024) {
+        return null;
+    }
+
+    $name = uniqid() . '_' . basename($file['name']);
+    $path = 'uploads/' . $name;
+
+    move_uploaded_file($file['tmp_name'], $path);
+
+    return $path;
+}
+
+function saveBusCompany(PDO $pdo, array $formData): void
+{
+    $stmt = $pdo->prepare("
+        INSERT INTO bus_companies (name, url, city, status, logo)
+        VALUES (:name, :url, :city, :status, :logo)
     ");
 
-    $statement->execute([
-        ':name'   => $formData['name'],
-        ':url'    => $formData['url'],
-        ':city'   => $formData['city'],
-        ':status' => $formData['status'],
+    $stmt->execute([
+            ':name'   => $formData['name'],
+            ':url'    => $formData['url'],
+            ':city'   => $formData['city'],
+            ':status' => $formData['status'],
+            ':logo'   => $formData['logo'],
+    ]);
+}
+
+function logAction(PDO $pdo, int $id, string $action, ?string $old = null, ?string $new = null): void
+{
+    $stmt = $pdo->prepare("
+        INSERT INTO bus_company_logs (bus_company_id, action, old_value, new_value)
+        VALUES (:id, :action, :old, :new)
+    ");
+
+    $stmt->execute([
+            ':id' => $id,
+            ':action' => $action,
+            ':old' => $old,
+            ':new' => $new
     ]);
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+
+    $logo = uploadLogo();
+
     $formData = [
-        'name'   => trim($_POST['name']   ?? ''),
-        'url'    => trim($_POST['url']    ?? ''),
-        'city'   => trim($_POST['city']   ?? ''),
-        'status' => trim($_POST['status'] ?? 'active'),
+            'name'   => trim($_POST['name'] ?? ''),
+            'url'    => trim($_POST['url'] ?? ''),
+            'city'   => trim($_POST['city'] ?? ''),
+            'status' => trim($_POST['status'] ?? 'active'),
+            'logo'   => $logo
     ];
 
     $errors = validateBusCompanyForm($formData);
 
     if (empty($errors)) {
-        saveBusCompany($connection, $formData);
+
+        saveBusCompany($pdo, $formData);
+
+        $id = $pdo->lastInsertId();
+
+        $newData = ['id' => $id] + $formData;
+
+        logAction($pdo, $id, 'create', null, json_encode($newData));
+
         header('Location: index.php');
         exit;
     }
@@ -196,8 +250,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </div>
     <?php endif; ?>
 
-    <form method="POST" class="form-card">
-
+    <form method="POST" enctype="multipart/form-data" class="form-card">
         <?php require 'partials/form.php'; ?>
 
         <div class="form-actions">
