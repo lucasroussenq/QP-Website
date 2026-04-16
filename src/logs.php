@@ -3,9 +3,8 @@
 require 'db.php';
 $pdo = $pdo ?? null;
 
-// busca todos os logs
 $stmt = $pdo->query("
-    SELECT l.*, b.name, b.logo
+    SELECT l.*, b.name
     FROM bus_company_logs l
     LEFT JOIN bus_companies b ON b.id = l.bus_company_id
     ORDER BY l.created_at DESC
@@ -19,76 +18,88 @@ $logs = $stmt->fetchAll();
 <head>
     <meta charset="UTF-8">
     <title>Histórico de Alterações</title>
+<style>
+    body {
+    font-family: Arial, sans-serif;
+    background: #f5f5f5;
+    margin: 0;
+    }
 
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background: #f5f5f5;
-            margin: 0;
-        }
+    /* HEADER */
+    .header {
+    width: 90%;
+    margin: 30px auto 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    }
 
-        .header {
-            width: 90%;
-            margin: 30px auto 15px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
+    /* BOTÃO */
+    .btn {
+    background: #1a2e6e;
+    color: white;
+    padding: 10px 16px;
+    text-decoration: none;
+    border-radius: 6px;
+    font-weight: bold;
+    transition: all 0.25s ease;
+    }
 
-        .btn {
-            background: #1a2e6e;
-            color: white;
-            padding: 10px 16px;
-            text-decoration: none;
-            border-radius: 6px;
-            font-weight: bold;
-            transition: 0.25s;
-        }
+    .btn:hover {
+    background: #2d5bff;
+    transform: translateY(-2px) scale(1.03);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+    }
 
-        .btn:hover {
-            background: #2d5bff;
-            transform: translateY(-2px);
-        }
+    .btn:active {
+    transform: scale(0.97);
+    }
 
-        .container {
-            width: 90%;
-            margin: auto;
-        }
+    /* CONTAINER */
+    .container {
+    width: 90%;
+    margin: auto;
+    }
 
-        .card {
-            background: white;
-            border-radius: 10px;
-            box-shadow: 0 2px 12px rgba(0,0,0,0.07);
-            overflow: hidden;
-        }
+    /* CARD */
+    .card {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+    overflow: hidden;
+    }
 
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
+    /* TABLE */
+    table {
+    width: 100%;
+    border-collapse: collapse;
+    }
 
-        th {
-            background: #f8f9ff;
-            padding: 10px;
-            border: 1px solid #eee;
-        }
+    th {
+    background: #f8f9ff;
+        color: #555;
+        padding: 12px;
+    text-align: left;
+    border: 1px solid #eee;
+    }
 
-        td {
-            padding: 10px;
-            border: 1px solid #eee;
-            font-size: 13px;
-        }
+    td {
+    padding: 10px;
+    border: 1px solid #eee;
+    font-size: 13px;
+    }
 
-        tr:hover {
-            background: #fafbff;
-        }
+    tr:hover {
+    background: #fafbff;
+    }
 
-        pre {
-            margin: 0;
-            white-space: pre-wrap;
-            font-size: 12px;
-        }
-    </style>
+    /* IMAGEM */
+    img {
+    border-radius: 6px;
+    object-fit: contain;
+    }
+
+</style>
 </head>
 
 <body>
@@ -99,16 +110,16 @@ $logs = $stmt->fetchAll();
 </div>
 
 <div class="container">
-
     <div class="card">
 
         <?php if (empty($logs)): ?>
-            <div style="padding:20px;">Nenhum log encontrado</div>
+            <div style="padding:20px;color: #555;">Nenhum log registrado.</div>
         <?php else: ?>
 
             <table>
                 <tr>
                     <th>ID</th>
+                    <th>ID Viação</th>
                     <th>Logo</th>
                     <th>Viação</th>
                     <th>Ação</th>
@@ -117,71 +128,90 @@ $logs = $stmt->fetchAll();
                     <th>Data</th>
                 </tr>
 
-                <?php foreach ($logs as $log): ?>
+
+
+                    <?php foreach ($logs as $log): ?>
 
                     <?php
                     $old = !empty($log['old_value']) ? json_decode($log['old_value'], true) : null;
                     $new = !empty($log['new_value']) ? json_decode($log['new_value'], true) : null;
+
+                    $changes = [];
+
+                    if ($log['action'] === 'update' && $old && $new) {
+                        foreach ($new as $key => $value) {
+
+                            if (in_array($key, ['updated_at'])) continue;
+
+                            $oldValue = $old[$key] ?? null;
+
+                            if ($oldValue != $value) {
+                                $changes[$key] = [
+                                        'old' => $oldValue,
+                                        'new' => $value
+                                ];
+                            }
+                        }
+                    }
                     ?>
 
-                    <tr>
-                        <td><?= $log['id'] ?></td>
+                        <tr>
+                            <!-- ID DO LOG -->
+                            <td><?= $log['id'] ?></td>
 
-                        <td>
+                            <!-- ID DA VIAÇÃO -->
+                            <td><?= $log['bus_company_id'] ?></td>
 
-                            <?php if ($log['action'] === 'update'): ?>
+                            <!-- LOGO -->
+                            <td>
+                            <?php
+                            $logo = null;
 
-                                <!-- LOGO ANTIGA -->
-                                <div>
-                                    <strong>Antes:</strong><br>
-                                    <?php if (!empty($old['logo'])): ?>
-                                        <img src="<?= $old['logo'] ?>" width="50">
-                                    <?php else: ?>
-                                        -
-                                    <?php endif; ?>
-                                </div>
+                            if ($log['action'] === 'update') {
+                                $logo = $new['logo'] ?? $old['logo'] ?? null;
+                            } elseif ($log['action'] === 'create') {
+                                $logo = $new['logo'] ?? null;
+                            } elseif ($log['action'] === 'delete') {
+                                $logo = $old['logo'] ?? null;
+                            }
+                            ?>
 
-                                <!-- LOGO NOVA -->
-                                <div style="margin-top:5px;">
-                                    <strong>Depois:</strong><br>
-                                    <?php if (!empty($new['logo'])): ?>
-                                        <img src="<?= $new['logo'] ?>" width="50">
-                                    <?php else: ?>
-                                        -
-                                    <?php endif; ?>
-                                </div>
-
-                            <?php elseif ($log['action'] === 'create'): ?>
-
-                                <!-- SÓ NOVA -->
-                                <?php if (!empty($new['logo'])): ?>
-                                    <img src="<?= $new['logo'] ?>" width="50">
-                                <?php else: ?>
-                                    -
-                                <?php endif; ?>
-
-                            <?php elseif ($log['action'] === 'delete'): ?>
-
-                                <!-- SÓ ANTIGA -->
-                                <?php if (!empty($old['logo'])): ?>
-                                    <img src="<?= $old['logo'] ?>" width="50">
-                                <?php else: ?>
-                                    -
-                                <?php endif; ?>
-
+                            <?php if ($logo): ?>
+                                <img src="<?= $logo ?>" width="50">
+                            <?php else: ?>
+                                -
                             <?php endif; ?>
-
                         </td>
 
-                        <td><?= htmlspecialchars($log['name'] ?? 'Removida') ?></td>
+                            <td>
+                                <?php
+                                if ($log['action'] === 'delete' && $old) {
+                                    echo htmlspecialchars($old['name'] ?? 'Removida');
+                                } else {
+                                    echo htmlspecialchars($log['name'] ?? ($new['name'] ?? 'Removida'));
+                                }
+                                ?>
+                            </td>
 
                         <td><?= strtoupper($log['action']) ?></td>
 
                         <td>
-                            <?php if ($log['action'] === 'update' && $old): ?>
+                            <?php if ($log['action'] === 'update' && $changes): ?>
                                 <ul>
-                                    <?php foreach ($old as $key => $value): ?>
-                                        <li><strong><?= $key ?>:</strong> <?= htmlspecialchars($value) ?></li>
+                                    <?php foreach ($changes as $key => $c): ?>
+                                        <li>
+                                            <strong><?= $key ?>:</strong>
+
+                                            <?php if ($key === 'logo'): ?>
+                                                <?php if ($c['old']): ?>
+                                                    <br><img src="<?= $c['old'] ?>" width="50">
+                                                <?php else: ?>
+                                                    -
+                                                <?php endif; ?>
+                                            <?php else: ?>
+                                                <?= htmlspecialchars($c['old'] ?? '-') ?>
+                                            <?php endif; ?>
+                                        </li>
                                     <?php endforeach; ?>
                                 </ul>
                             <?php else: ?>
@@ -190,10 +220,22 @@ $logs = $stmt->fetchAll();
                         </td>
 
                         <td>
-                            <?php if ($log['action'] === 'update' && $new): ?>
+                            <?php if ($log['action'] === 'update' && $changes): ?>
                                 <ul>
-                                    <?php foreach ($new as $key => $value): ?>
-                                        <li><strong><?= $key ?>:</strong> <?= htmlspecialchars($value) ?></li>
+                                    <?php foreach ($changes as $key => $c): ?>
+                                        <li>
+                                            <strong><?= $key ?>:</strong>
+
+                                            <?php if ($key === 'logo'): ?>
+                                                <?php if ($c['new']): ?>
+                                                    <br><img src="<?= $c['new'] ?>" width="50">
+                                                <?php else: ?>
+                                                    -
+                                                <?php endif; ?>
+                                            <?php else: ?>
+                                                <?= htmlspecialchars($c['new'] ?? '-') ?>
+                                            <?php endif; ?>
+                                        </li>
                                     <?php endforeach; ?>
                                 </ul>
                             <?php else: ?>
@@ -211,7 +253,6 @@ $logs = $stmt->fetchAll();
         <?php endif; ?>
 
     </div>
-
 </div>
 
 </body>
