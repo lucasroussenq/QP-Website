@@ -34,10 +34,19 @@ function fetchAllBusCompanies(PDO $pdo, string $filterName = '', string $filterS
     return $query->fetchAll();
 }
 
+// Busca todos os nomes para o autocomplete
+function fetchAllBusCompanyNames(PDO $pdo): array
+{
+    $query = $pdo->query("SELECT name FROM bus_companies ORDER BY name ASC");
+    return array_column($query->fetchAll(), 'name');
+}
+
 $filterName   = trim($_GET['name']   ?? '');
 $filterStatus = trim($_GET['status'] ?? '');
 
-$busCompanies = fetchAllBusCompanies($pdo, $filterName, $filterStatus);
+$busCompanies        = fetchAllBusCompanies($pdo, $filterName, $filterStatus);
+$busCompanyNames     = fetchAllBusCompanyNames($pdo);
+$busCompanyNamesJson = json_encode($busCompanyNames);
 ?>
 
 <!DOCTYPE html>
@@ -47,6 +56,14 @@ $busCompanies = fetchAllBusCompanies($pdo, $filterName, $filterStatus);
     <title>Cadastro de Viações</title>
 
     <style>
+        @keyframes shake {
+            0%   { transform: translateX(0); }
+            20%  { transform: translateX(-6px); }
+            40%  { transform: translateX(6px); }
+            60%  { transform: translateX(-4px); }
+            80%  { transform: translateX(4px); }
+            100% { transform: translateX(0); }
+        }
         body {
             font-family: Arial, sans-serif;
             background: #f5f5f5;
@@ -112,6 +129,7 @@ $busCompanies = fetchAllBusCompanies($pdo, $filterName, $filterStatus);
             display: flex;
             flex-direction: column;
             gap: 5px;
+            position: relative;
         }
 
         .filter-group label {
@@ -127,7 +145,7 @@ $busCompanies = fetchAllBusCompanies($pdo, $filterName, $filterStatus);
             border-radius: 6px;
             font-size: 13px;
             transition: 0.2s;
-            min-width: 180px;
+            min-width: 220px;
         }
 
         .filter-group input:focus,
@@ -137,10 +155,46 @@ $busCompanies = fetchAllBusCompanies($pdo, $filterName, $filterStatus);
             outline: none;
         }
 
+        /* AUTOCOMPLETE */
+        .autocomplete-list {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: white;
+            border: 1px solid #ddd;
+            border-top: none;
+            border-radius: 0 0 8px 8px;
+            box-shadow: 0 6px 16px rgba(0,0,0,0.1);
+            z-index: 100;
+            max-height: 200px;
+            overflow-y: auto;
+            display: none;
+        }
+
+        .autocomplete-item {
+            padding: 9px 14px;
+            font-size: 13px;
+            cursor: pointer;
+            color: #333;
+            border-bottom: 1px solid #f5f5f5;
+        }
+
+        .autocomplete-item:last-child {
+            border-bottom: none;
+        }
+
+        .autocomplete-item:hover,
+        .autocomplete-item.highlighted {
+            background: #e8eeff;
+            color: #1a2e6e;
+            font-weight: bold;
+        }
+
         .btn-filter {
             background: #1a2e6e;
             color: white;
-            padding: 8px 16px;
+            padding: 10px 16px;
             border: none;
             border-radius: 6px;
             font-weight: bold;
@@ -279,14 +333,18 @@ $busCompanies = fetchAllBusCompanies($pdo, $filterName, $filterStatus);
             text-decoration: underline;
         }
 
-        .delete {
+        .delete-btn {
             color: red;
-            text-decoration: none;
+            background: none;
+            border: none;
+            cursor: pointer;
             font-weight: bold;
             font-size: 13px;
+            padding: 0;
+            font-family: Arial, sans-serif;
         }
 
-        .delete:hover {
+        .delete-btn:hover {
             text-decoration: underline;
         }
 
@@ -296,10 +354,117 @@ $busCompanies = fetchAllBusCompanies($pdo, $filterName, $filterStatus);
             text-align: center;
             color: #888;
         }
+
+        /* ── MODAL DE CONFIRMAÇÃO ── */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.45);
+            z-index: 999;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal {
+            background: white;
+            border-radius: 14px;
+            padding: 36px 32px 28px;
+            width: 100%;
+            max-width: 400px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+            text-align: center;
+            animation: modalIn 0.2s ease, shake 0.3s ease;
+        }
+
+        @keyframes modalIn {
+            from { transform: scale(0.9); opacity: 0; }
+            to   { transform: scale(1);   opacity: 1; }
+        }
+
+        .modal-icon {
+            width: 56px;
+            height: 56px;
+            background: #fee2e2;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 18px;
+            font-size: 26px;
+        }
+
+        .modal h2 {
+            font-size: 18px;
+            color: #1a1a1a;
+            margin-bottom: 8px;
+        }
+
+        .modal p {
+            font-size: 14px;
+            color: #6b7280;
+            margin-bottom: 28px;
+            line-height: 1.5;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+        }
+
+        .modal-btn-cancel {
+            padding: 10px 24px;
+            border-radius: 8px;
+            border: 1.5px solid #e5e7eb;
+            background: white;
+            color: #555;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .modal-btn-cancel:hover {
+            background: #f5f5f5;
+        }
+
+        .modal-btn-confirm {
+            padding: 10px 24px;
+            border-radius: 8px;
+            background: #ef4444;
+            color: white;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.25s ease;
+        }
+
+        .modal-btn-confirm:hover {
+            background: #dc2626;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 10px rgba(239,68,68,0.3);
+        }
     </style>
 </head>
 
 <body>
+
+<!-- MODAL DE CONFIRMAÇÃO DE EXCLUSÃO -->
+<div class="modal-overlay" id="deleteModal">
+    <div class="modal">
+        <h2>Excluir Viação</h2>
+        <p>Tem certeza que deseja excluir esta viação?<br>Esta ação não pode ser desfeita.</p>
+        <div class="modal-actions">
+            <button class="modal-btn-cancel" onclick="closeDeleteModal()">Cancelar</button>
+            <a id="deleteConfirmLink" href="#" class="modal-btn-confirm">Sim, excluir</a>
+        </div>
+    </div>
+</div>
 
 <div class="header">
     <h1>Cadastro de Viações</h1>
@@ -322,7 +487,9 @@ $busCompanies = fetchAllBusCompanies($pdo, $filterName, $filterStatus);
                     name="name"
                     value="<?= htmlspecialchars($filterName) ?>"
                     placeholder="Buscar por nome..."
+                    autocomplete="off"
             >
+            <div class="autocomplete-list" id="autocompleteList"></div>
         </div>
 
         <div class="filter-group">
@@ -408,11 +575,11 @@ $busCompanies = fetchAllBusCompanies($pdo, $filterName, $filterStatus);
                         <td>
                             <div class="action-buttons">
                                 <a href="edit.php?id=<?= $busCompany['id'] ?>" class="edit">Editar</a>
-                                <a href="delete.php?id=<?= $busCompany['id'] ?>"
-                                   class="delete"
-                                   onclick="return confirm('Tem certeza que deseja excluir?')">
+                                <button
+                                        class="delete-btn"
+                                        onclick="openDeleteModal('delete.php?id=<?= $busCompany['id'] ?>')">
                                     Excluir
-                                </a>
+                                </button>
                             </div>
                         </td>
                     </tr>
@@ -424,6 +591,11 @@ $busCompanies = fetchAllBusCompanies($pdo, $filterName, $filterStatus);
         <?php endif; ?>
 
     </div>
+
+    <script>
+        window.allNames = <?= $busCompanyNamesJson ?>;
+    </script>
+    <script src="script.js"></script>
 
 </div>
 
