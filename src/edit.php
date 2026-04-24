@@ -17,7 +17,6 @@ function uploadLogo(): ?string
     if (!isset($_FILES['logo']) || $_FILES['logo']['error'] !== 0) {
         return null;
     }
-
     $file = $_FILES['logo'];
     $allowed = ['image/jpeg', 'image/png', 'image/jpg'];
 

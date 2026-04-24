@@ -227,7 +227,7 @@ $busCompanyNamesJson = json_encode($busCompanyNames);
 
         .filter-active-msg {
             font-size: 12px;
-            color: #2d5bff;
+            color: #888;
             margin-left: auto;
             align-self: center;
         }
