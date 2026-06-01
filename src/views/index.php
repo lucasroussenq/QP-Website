@@ -5,6 +5,7 @@
 /** @var string $filterName */
 /** @var string $filterStatus */
 /** @var string $busCompanyNamesJson */
+/** @var string $filterExcluidos */
 ?>
 
 <!DOCTYPE html>
@@ -57,6 +58,14 @@
                 <option value="">Todos (exceto deletados)</option>
                 <option value="active"   <?= $filterStatus === 'active'   ? 'selected' : '' ?>>Ativo</option>
                 <option value="inactive" <?= $filterStatus === 'inactive' ? 'selected' : '' ?>>Inativo</option>
+            </select>
+        </div>
+
+        <div class="filter-group">
+            <label for="filter-status">Excluídos</label>
+            <select id="filter-status" name="excluidos">
+                <option value="">Apenas não excluídos</option>
+                <option value="sim"   <?= $filterExcluidos === 'sim'   ? 'selected' : '' ?>>Excluido</option>
             </select>
         </div>
 

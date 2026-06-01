@@ -18,12 +18,12 @@ final class HistoryService
         $this->pdo = $pdo ?? \getPdo();
     }
 
-    public function all(string $name = '', string $status = '', int $page = 1, int $perPage = 10): array
+    public function all(array $filters = [], int $page = 1, int $perPage = 10): array
     {
-        $sql = 'SELECT * FROM tasks.users WHERE 1=1';
+        $sql = 'SELECT * FROM tasks.entity_logs WHERE 1=1';
         $params = [];
 
-        if ($name !== '') {
+         /*if ($name !== '') {
             $sql .= ' AND name LIKE :name';
             $params['name'] = "%$name%";
         }
@@ -34,7 +34,7 @@ final class HistoryService
         } else {
             $sql .= " AND status != 'deleted'";
         }
-
+*/
 
         $countSql = str_replace('SELECT *', 'SELECT COUNT(*)', $sql);
         $countStmt = $this->pdo->prepare($countSql);
@@ -52,7 +52,7 @@ final class HistoryService
         $stmt->execute();
 
         return [
-            'items' => array_map(fn($row) => User::fromRow($row), $stmt->fetchAll()),
+            'items' => $stmt->fetchAll(),
             'total' => $total,
             'page' => $page,
             'perPage' => $perPage,

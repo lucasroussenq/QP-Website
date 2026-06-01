@@ -53,12 +53,14 @@ final class BusCompanyController
 
         $name = (string)($_GET['name'] ?? '');
         $status = (string)($_GET['status'] ?? '');
+        $excluidos = (string)($_GET['excluidos'] ?? '');
 
         View::render('index', [
             'title' => 'Viações',
-            'companies' => $this->service->all($name, $status),
+            'companies' => $this->service->all($name, $status, $excluidos),
             'filterName' => $name,
             'filterStatus' => $status,
+            'filterExcluidos' => $excluidos,
             'busCompanyNamesJson' => json_encode($this->service->allNames())
         ]);
     }

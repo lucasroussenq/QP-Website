@@ -16,7 +16,7 @@ final class BusCompanyService
         $this->pdo = $pdo ?? \getPdo();
     }
 
-    public function all(string $name = '', string $status = '', int $page = 1, int $perPage = 10): array
+    public function all(string $name = '', string $status = '', string $excluidos = '', int $page = 1, int $perPage = 10): array
     {
         $sql = 'SELECT * FROM tasks.bus_companies WHERE 1=1';
         $params = [];
@@ -29,9 +29,11 @@ final class BusCompanyService
         if ($status !== '') {
             $sql .= ' AND status = :status';
             $params['status'] = $status;
+        }
+        if ($excluidos == 'sim' ) {
+            $sql .= " AND deleted_at is not null ";
         } else {
-            // Por padrão não mostra deletados na listagem normal
-            $sql .= " AND status != 'deleted_at'";
+            $sql .= " AND deleted_at IS NULL ";
         }
 
         $countSql = str_replace('SELECT *', 'SELECT COUNT(*)', $sql);

@@ -45,6 +45,8 @@ final class HistoryController
         // Remove filtros vazios para não poluir a query
         $filters = array_filter($filters, fn($v) => $v !== '');
 
+
+        //consertar pq o all esta recebendo uma array, colocar array lá
         $page   = max(1, (int) ($_GET['page'] ?? 1));
         $result = $this->service->all($filters, $page);
 
