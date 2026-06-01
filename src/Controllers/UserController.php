@@ -128,6 +128,22 @@ final class UserController
             'old'    => (array) $user,
         ]);
     }
+ public function view (int $id): void
+    {
+        $this->checkAdmin();
+
+        $user = $this->service->find($id);
+        if (!$user) {
+            View::redirect('/users');
+            return;
+        }
+
+        View::render('users/view', [
+            'title'  => 'vizualizar o usuário',
+            'user'   => $user,
+
+        ]);
+    }
 
     public function update(int $id): void
     {
@@ -178,7 +194,7 @@ final class UserController
 
         $this->service->restore($id);
         View::flash('success', 'Usuário restaurado com sucesso.');
-        View::redirect('/users?status=deleted');
+        View::redirect('/users');
     }
 
     private function validate(array $data, bool $forUpdate = false): array

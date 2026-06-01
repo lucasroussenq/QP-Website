@@ -31,13 +31,13 @@ final class BusCompanyService
             $params['status'] = $status;
         } else {
             // Por padrão não mostra deletados na listagem normal
-            $sql .= " AND status != 'deleted'";
+            $sql .= " AND status != 'deleted_at'";
         }
 
         $countSql = str_replace('SELECT *', 'SELECT COUNT(*)', $sql);
         $countStmt = $this->pdo->prepare($countSql);
         $countStmt->execute($params);
-        $total = (int) $countStmt->fetchColumn();
+        $total = (int)$countStmt->fetchColumn();
 
         $offset = ($page - 1) * $perPage;
         $sql .= ' ORDER BY created_at DESC LIMIT :limit OFFSET :offset';
@@ -70,14 +70,14 @@ final class BusCompanyService
              VALUES (:name, :url, :city, :status, :logo)'
         );
         $stmt->execute([
-            'name'   => $data['name'],
-            'url'    => $data['url'],
-            'city'   => $data['city'],
+            'name' => $data['name'],
+            'url' => $data['url'],
+            'city' => $data['city'],
             'status' => $data['status'],
-            'logo'   => $data['logo'] ?? null,
+            'logo' => $data['logo'] ?? null,
         ]);
 
-        $id = (int) $this->pdo->lastInsertId();
+        $id = (int)$this->pdo->lastInsertId();
         $data['id'] = $id;
         $this->log('bus_company', $id, 'create', null, json_encode($data));
         return $id;
@@ -92,10 +92,10 @@ final class BusCompanyService
         $sql .= ' WHERE id = :id';
 
         $params = [
-            'id'     => $id,
-            'name'   => $data['name'],
-            'url'    => $data['url'],
-            'city'   => $data['city'],
+            'id' => $id,
+            'name' => $data['name'],
+            'url' => $data['url'],
+            'city' => $data['city'],
             'status' => $data['status'],
         ];
         if ($data['logo'] !== null) $params['logo'] = $data['logo'];
@@ -106,38 +106,91 @@ final class BusCompanyService
         $this->log('bus_company', $id, 'update', json_encode($old), json_encode($new));
     }
 
-    /** Soft delete: muda status para 'deleted' */
     public function delete(int $id): bool
     {
+        // 1. Busca o usuário para garantir que existe e pegar os dados para o log
         $company = $this->find($id);
-        if (!$company) return false;
+        if (!$company) {
+            return false;
+        }
 
-        $this->pdo->prepare(
-            "UPDATE tasks.bus_companies SET status = 'deleted' WHERE id = :id"
-        )->execute(['id' => $id]);
+        // 2. Prepara a query usando o TIMESTAMP atual (Função NOW() do banco de dados)
+        $stmt = $this->pdo->prepare(
+            "UPDATE tasks.bus_companies SET deleted_at = NOW() WHERE id = :id AND deleted_at IS NULL"
+        );
 
-        $this->log('bus_company', $id, 'delete', json_encode($company), null);
-        return true;
+        // 3. Executa a query
+        $success = $stmt->execute(['id' => $id]);
+
+        // 4. Se a query rodou com sucesso, grava o histórico
+        if ($success) {
+            $this->log('bus_company',$id, 'delete', json_encode($company), null);
+            return true;
+        }
+
+        return false;
     }
 
-    /** Restaura um registro deletado */
+
+    /** Restaurar usuário deletado */
     public function restore(int $id): bool
     {
+        // 1. Busca o usuário incluindo os deletados para poder restaurar
         $company = $this->find($id);
-        if (!$company || $company->status !== 'deleted') return false;
 
-        $this->pdo->prepare(
-            "UPDATE tasks.bus_companies SET status = 'active' WHERE id = :id"
-        )->execute(['id' => $id]);
+        // Valida se o usuário existe e se ele realmente está deletado
+        if (!$company || $company->deletedAt === null) {
+            return false;
+        }
 
-        $restored = $this->find($id);
-        $this->log('bus_company', $id, 'restore', json_encode($company), json_encode($restored));
-        return true;
+        // 2. Corrige o PDO e define o timestamp como NULL
+        $stmt = $this->pdo->prepare(
+            "UPDATE tasks.bus_companies SET deleted_at = NULL WHERE id = :id AND deleted_at IS NOT NULL"
+        );
+        $success = $stmt->execute(['id' => $id]);
+
+        if ($success) {
+            // 3. Busca o estado atualizado para o log histórico
+            $restored = $this->find($id); // Aqui o find comum já funciona
+            $this->log('bus_company', $id, 'restore', json_encode($company), json_encode($restored));
+            return true;
+        }
+
+        return false;
     }
 
-    public function allNames(): array
+
+    /*
+
+      public function delete(int $id): bool
+      {
+          $company = $this->find($id);
+          if (!$company) return false;
+
+          $this->pdo->prepare(
+              "UPDATE tasks.bus_companies SET status = 'deleted' WHERE id = :id"
+          )->execute(['id' => $id]);
+
+          $this->log('bus_company', $id, 'delete', json_encode($company), null);
+          return true;
+      }
+      public function restore(int $id): bool
+      {
+          $company = $this->find($id);
+          if (!$company || $company->status !== 'deleted') return false;
+
+          $this->pdo->prepare(
+              "UPDATE tasks.bus_companies SET status = 'active' WHERE id = :id"
+          )->execute(['id' => $id]);
+
+          $restored = $this->find($id);
+          $this->log('bus_company', $id, 'restore', json_encode($company), json_encode($restored));
+          return true;
+      }
+      */
+public function allNames(): array
     {
-        $query = $this->pdo->query("SELECT name FROM tasks.bus_companies WHERE status != 'deleted' ORDER BY name ASC");
+        $query = $this->pdo->query("SELECT name FROM tasks.bus_companies WHERE status != 'deleted_at' ORDER BY name ASC");
         return $query->fetchAll(PDO::FETCH_COLUMN);
     }
 
@@ -181,7 +234,7 @@ final class BusCompanyService
         }
         if (!empty($filters['bus_name'])) {
             $sql .= ' AND (b.name LIKE :bus_name OR l.old_value LIKE :bus_name_json)';
-            $params['bus_name']      = '%' . $filters['bus_name'] . '%';
+            $params['bus_name'] = '%' . $filters['bus_name'] . '%';
             $params['bus_name_json'] = '%' . $filters['bus_name'] . '%';
         }
         if (!empty($filters['action'])) {
@@ -200,7 +253,7 @@ final class BusCompanyService
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    private function log(string $entityType, int $entityId, string $action, ?string $old, ?string $new): void
+    private function log(string $entity_type, int $entity_id, string $action, ?string $old, ?string $new): void
     {
         if (session_status() === PHP_SESSION_NONE) session_start();
         $userId = isset($_SESSION['user_id']) ? (int) $_SESSION['user_id'] : null;
@@ -209,8 +262,8 @@ final class BusCompanyService
             'INSERT INTO tasks.entity_logs (entity_type, entity_id, user_id, action, old_value, new_value)
              VALUES (:entity_type, :entity_id, :user_id, :action, :old, :new)'
         )->execute([
-            'entity_type' => $entityType,
-            'entity_id'   => $entityId,
+            'entity_type' => $entity_type, // estava 'bus_Company' com C maiúsculo
+            'entity_id'   => $entity_id,
             'user_id'     => $userId,
             'action'      => $action,
             'old'         => $old,

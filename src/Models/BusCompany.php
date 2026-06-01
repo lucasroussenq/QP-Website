@@ -14,7 +14,7 @@ final class BusCompany
         public string  $status,
         public ?string $logo,
         public string  $createdAt,
-        public string  $updatedAt,
+        public ?string  $deletedAt,
     )
     {
     }
@@ -29,7 +29,7 @@ final class BusCompany
             status: (string)($row['status'] ?? 'active'),
             logo: isset($row['logo']) ? (string)$row['logo'] : null,
             createdAt: (string)($row['created_at'] ?? ''),
-            updatedAt: (string)($row['updated_at'] ?? ''),
+            deletedAt: isset($row['deleted_at']) ? (string)$row['deleted_at'] : null,
         );
     }
 }

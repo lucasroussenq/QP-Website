@@ -5,7 +5,6 @@
 /** @var string $filterName */
 /** @var string $filterStatus */
 /** @var string $busCompanyNamesJson */
-
 ?>
 
 <!DOCTYPE html>
@@ -58,7 +57,6 @@
                 <option value="">Todos (exceto deletados)</option>
                 <option value="active"   <?= $filterStatus === 'active'   ? 'selected' : '' ?>>Ativo</option>
                 <option value="inactive" <?= $filterStatus === 'inactive' ? 'selected' : '' ?>>Inativo</option>
-                <option value="deleted"  <?= $filterStatus === 'deleted'  ? 'selected' : '' ?>>Deletados</option>
             </select>
         </div>
 
@@ -112,7 +110,6 @@
                                 <?= match($company->status) {
                                     'active'   => 'Ativo',
                                     'inactive' => 'Inativo',
-                                    'deleted'  => 'Deletado',
                                     default    => $company->status,
                                 } ?>
                             </span>
@@ -120,19 +117,19 @@
                         <td><?= date('d/m/Y H:i', strtotime($company->createdAt)) ?></td>
                         <td>
                             <div class="action-buttons">
-                                <?php if ($company->status !== 'deleted'): ?>
-                                    <a href="/bus-companies/<?= $company->id ?>/edit" class="edit">Editar</a>
-                                    <button type="button" class="delete-btn"
-                                            onclick="openDeleteModalCustom('/bus-companies/<?= $company->id ?>/delete')">
-                                        Excluir
-                                    </button>
-                                <?php else: ?>
+                                <?php if (isset($company->deletedAt) && $company->deletedAt !== ''): ?>
                                     <form method="POST" action="/bus-companies/<?= $company->id ?>/restore"
                                           style="display:inline">
                                         <button type="submit" class="edit" style="background:#28a745;color:white;border:none;cursor:pointer;padding:4px 10px;border-radius:4px;">
                                             Restaurar
                                         </button>
                                     </form>
+                                <?php else: ?>
+                                    <a href="/bus-companies/<?= $company->id ?>/edit" class="edit">Editar</a>
+                                    <a href="/bus-companies/<?= $company->id ?>/view" class="edit">Veja</a>
+                                    <button type="button" class="delete-btn"
+                                            onclick="openDeleteModalCustom('/bus-companies/<?= $company->id ?>/delete')">Excluir</button>
+
                                 <?php endif; ?>
                             </div>
                         </td>

@@ -32,7 +32,7 @@ class AuthController {
             $_SESSION['user_id']    = $user['id'];
             $_SESSION['user_name']  = $user['name'];
             $_SESSION['user_email'] = $user['email'];
-            $_SESSION['user_tipo']  = $user['tipo'] ?? 'usuario'; // <-- salva o tipo
+            $_SESSION['user_type']  = $user['type'] ?? 'usuario'; // <-- salva o tipo
 
             header('Location: /');
             exit;

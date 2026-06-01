@@ -97,6 +97,7 @@
                             <div class="action-buttons">
                                 <?php if ($user->status !== 'deleted'): ?>
                                     <a href="/users/<?= $user->id ?>/edit" class="edit">Editar</a>
+                                    <a href="/users/<?= $user->id ?>/view" class="edit">V</a>
                                     <button type="button" class="delete-btn"
                                             onclick="openDeleteModalCustom('/users/<?= $user->id ?>/delete')">
                                         Excluir

@@ -12,6 +12,7 @@ final class User
         public string $email,
         public string $status,
         public string $createdAt,
+        public string $deletedAt,
     ) {}
 
     public static function fromRow(array $row): self
@@ -22,6 +23,7 @@ final class User
             email:     (string)($row['email'] ?? ''),
             status:    (string)($row['status'] ?? 'active'),
             createdAt: (string)($row['created_at'] ?? ''),
+            deletedAt: (string)($row['deleted_at'] ?? ''),
         );
     }
 }

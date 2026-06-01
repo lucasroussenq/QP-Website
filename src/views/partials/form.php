@@ -1,5 +1,6 @@
 <?php
 /** @var array $busCompany */
+/** @var bool $interactive */
 ?>
 
 <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;700&display=swap" rel="stylesheet">
@@ -30,6 +31,7 @@
             value="<?= htmlspecialchars($busCompany['name'] ?? '') ?>"
             placeholder="Ex: Viação Cometa"
             required
+            <?php /*= !$interactive ? ' disabled' : '' */?>
     >
 </div>
 
