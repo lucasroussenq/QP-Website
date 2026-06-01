@@ -19,6 +19,7 @@ $router->get('/bus-companies/create',                 [BusCompanyController::cla
 $router->post('/bus-companies',                       [BusCompanyController::class, 'store']);
 $router->get('/bus-companies/{id}',                   [BusCompanyController::class, 'show']);
 $router->get('/bus-companies/{id}/edit',              [BusCompanyController::class, 'edit']);
+$router->get('/bus-companies/{id}/view',              [BusCompanyController::class, 'view']);
 $router->post('/bus-companies/{id}/update',           [BusCompanyController::class, 'update']);
 $router->post('/bus-companies/{id}',                  [BusCompanyController::class, 'update']);
 $router->post('/bus-companies/{id}/delete',           [BusCompanyController::class, 'destroy']);
@@ -26,18 +27,22 @@ $router->post('/bus-companies/{id}/restore',          [BusCompanyController::cla
 
 // Users
 $router->get('/users',                                [UserController::class, 'index']);
+$router->get('/users/logs',                                [UserController::class, 'logs']);
 $router->get('/users/create',                         [UserController::class, 'create']);
 $router->post('/users',                               [UserController::class, 'store']);
 $router->get('/users/{id}',                           [UserController::class, 'show']);
 $router->get('/users/{id}/edit',                      [UserController::class, 'edit']);
+$router->get('/users/{id}/view',                      [UserController::class, 'view']);
 $router->post('/users/{id}/update',                   [UserController::class, 'update']);
 $router->post('/users/{id}/delete',                   [UserController::class, 'destroy']);
 $router->post('/users/{id}/restore',                  [UserController::class, 'restore']);
 
 //Auth
-
 $router->get('/login',    [AuthController::class, 'loginForm']);
 $router->post('/login',   [AuthController::class, 'authenticate']);
 $router->get('/logout',   [AuthController::class, 'logout']);
 $router->get('/register', [AuthController::class, 'registerForm']);
 $router->post('/register',[AuthController::class, 'register']);
+
+use App\Controllers\HistoryController;
+$router->get('/history',   [HistoryController::class, 'index']);
