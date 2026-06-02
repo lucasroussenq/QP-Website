@@ -3,7 +3,7 @@
 > Mini-framework PHP 8.4 com arquitetura inspirada no Laravel para gestão de empresas de transporte rodoviário, com design system de alta fidelidade baseado na Quero Passagem.
 
 ---
-
+lalalala
 ##  Índice
 
 - [Visão Geral](#-visão-geral)
