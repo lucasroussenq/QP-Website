@@ -17,6 +17,8 @@ $companyData = (array) ($company ?? []);
     <form method="POST" action="/bus-companies/<?= $company->id ?>/update" enctype="multipart/form-data" class="form-card">
         <?php
         $busCompany = !empty($old) ? $old : (array) $company;
+        /* na verdade, voce vai detectar se isso eh uma pagina de visualizacao (como? me surpreenda) */
+        /*$interactive = true;*/
         include __DIR__ . '/partials/form.php';
         ?>
         <div class="form-actions">

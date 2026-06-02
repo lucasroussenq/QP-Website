@@ -3,12 +3,6 @@ declare(strict_types=1);
 
 /** @var array $logs */
 /** @var array $filters */
-
-$formatLogo = function($path) {
-    if (!$path) return null;
-    $path = ltrim($path, '/');
-    return (strpos($path, 'uploads/') === 0) ? '/' . $path : '/uploads/' . $path;
-};
 ?>
 
 <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;700&display=swap" rel="stylesheet">
@@ -18,24 +12,33 @@ $formatLogo = function($path) {
     body { background: #f5f5f5; margin: 0; }
     h1 { font-weight: 700; color: #0D2240; }
     .header { width: 95%; margin: 30px auto 15px; display: flex; justify-content: space-between; align-items: center; }
-    .btn { background: #1a2e6e; color: white; padding: 10px 16px; text-decoration: none; border-radius: 6px; font-weight: bold; transition: all 0.2s; }
-    .btn:hover { background: #2d5bff; }
+    .btn { background: #1a2e6e; color: white; padding: 10px 16px; text-decoration: none; border-radius: 6px; font-weight: bold; }
 
-    .filters { margin: 0 auto 20px; background: white; padding: 15px; border-radius: 8px; box-shadow: 0 2px 12px rgba(0,0,0,0.05); display: flex; flex-direction: row; align-items: flex-end; gap: 8px; overflow-x: auto; }
+    .filters { width: 95%; margin: 0 auto 20px; background: white; padding: 15px; border-radius: 8px; display: flex; gap: 8px; flex-wrap: wrap; align-items: flex-end; }
     .filter-group { display: flex; flex-direction: column; gap: 4px; }
-    .filter-group label { font-size: 11px; font-weight: bold; color: #555; text-transform: uppercase; white-space: nowrap; }
-    .filter-group input, .filter-group select { padding: 8px; border: 1px solid #ddd; border-radius: 4px; font-size: 13px; outline: none; width: 130px; font-family: 'Sora', sans-serif; }
-
-    .btn-filter { background: #1a2e6e; color: white; border: none; padding: 0 20px; border-radius: 4px; font-weight: bold; cursor: pointer; height: 35px; transition: 0.2s; font-family: 'Sora', sans-serif; }
-    .btn-clear { background: #ddd; color: #333; padding: 0 15px; border-radius: 4px; text-decoration: none; font-size: 13px; font-weight: bold; height: 35px; display: flex; align-items: center; white-space: nowrap; }
+    .filter-group input, .filter-group select { padding: 6px 8px; border: 1px solid #ddd; border-radius: 6px; font-size: 13px; }
+    .filter-group label { font-size: 12px; font-weight: 600; color: #555; }
+    .filters button { padding: 8px 16px; background: #1a2e6e; color: white; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; }
 
     .container { width: 95%; margin: auto; }
-    .card { background: white; border-radius: 12px; box-shadow: 0 2px 12px rgba(0,0,0,0.07); overflow: hidden; margin-bottom: 50px; }
+    .card { background: white; border-radius: 12px; overflow: hidden; margin-bottom: 50px; }
     table { width: 100%; border-collapse: collapse; }
-    th { background: #f8f9ff; color: #555; padding: 12px; text-align: left; border: 1px solid #eee; font-size: 12px; text-transform: uppercase; }
-    td { padding: 10px; border: 1px solid #eee; font-size: 13px; vertical-align: top; }
-    tr:hover { background: #fafbff; }
-    img { border-radius: 6px; object-fit: contain; border: 1px solid #f0f0f0; background: #fff; }
+    th { background: #f8f9ff; padding: 12px; font-size: 12px; text-transform: uppercase; text-align: left; }
+    td { padding: 10px; border-top: 1px solid #eee; font-size: 13px; vertical-align: top; }
+
+    .badge { display: inline-block; padding: 2px 8px; border-radius: 20px; font-size: 11px; font-weight: bold; text-transform: uppercase; }
+    .badge-create { background: #d1fae5; color: #065f46; }
+    .badge-update { background: #dbeafe; color: #1e40af; }
+    .badge-delete { background: #fee2e2; color: #991b1b; }
+    .badge-restore { background: #fef3c7; color: #92400e; }
+
+    .entity-user        { background: #ede9fe; color: #5b21b6; }
+    .entity-bus_company { background: #e0f2fe; color: #075985; }
+
+    .change-row { margin-bottom: 4px; line-height: 1.4; }
+    .change-key { font-weight: 600; color: #555; }
+    .json-full { font-size: 11px; color: #666; word-break: break-all; }
+    .empty-dash { color: #aaa; }
 </style>
 
 <div class="header">
@@ -44,56 +47,65 @@ $formatLogo = function($path) {
 </div>
 
 <div class="container">
-    <form method="GET" action="/bus-companies/logs" class="filters">
+
+    <form method="GET" action="/history" class="filters">
+
         <div class="filter-group">
-            <label>ID Log</label>
-            <input type="number" name="id" value="<?= htmlspecialchars((string)($filters['id'] ?? '')) ?>">
+            <label>Tipo de Entidade</label>
+            <select name="entity_type">
+                <option value="">Todas</option>
+                <option value="user"        <?= ($filters['entity_type'] ?? '') === 'user'        ? 'selected' : '' ?>>Usuário</option>
+                <option value="bus_company" <?= ($filters['entity_type'] ?? '') === 'bus_company' ? 'selected' : '' ?>>Viação</option>
+                <option value="restore" <?= ($filters['entity_type'] ?? '') === 'restore' ? 'selected' : '' ?>>Restaurar</option>
+            </select>
         </div>
+
         <div class="filter-group">
-            <label>ID Usuário</label>
+            <label>Nome da Entidade</label>
+            <input type="text" name="entity_name" value="<?= htmlspecialchars((string)($filters['entity_name'] ?? '')) ?>">
+        </div>
+
+        <div class="filter-group">
+            <label>ID da Entidade</label>
+            <input type="number" name="entity_id" value="<?= htmlspecialchars((string)($filters['entity_id'] ?? '')) ?>">
+        </div>
+
+        <div class="filter-group">
+            <label>ID do Usuário</label>
             <input type="number" name="user_id" value="<?= htmlspecialchars((string)($filters['user_id'] ?? '')) ?>">
         </div>
-        <div class="filter-group">
-            <label>ID Viação</label>
-            <input type="number" name="bus_id" value="<?= htmlspecialchars((string)($filters['bus_id'] ?? '')) ?>">
-        </div>
-        <div class="filter-group">
-            <label>Nome Viação</label>
-            <input type="text" name="bus_name" placeholder="Ex: Penha" value="<?= htmlspecialchars((string)($filters['bus_name'] ?? '')) ?>">
-        </div>
+
         <div class="filter-group">
             <label>Ação</label>
             <select name="action">
                 <option value="">Todas</option>
-                <option value="create" <?= ($filters['action'] ?? '') === 'create' ? 'selected' : '' ?>>CREATE</option>
-                <option value="update" <?= ($filters['action'] ?? '') === 'update' ? 'selected' : '' ?>>UPDATE</option>
-                <option value="delete" <?= ($filters['action'] ?? '') === 'delete' ? 'selected' : '' ?>>DELETE</option>
+                <option value="create"  <?= ($filters['action'] ?? '') === 'create'  ? 'selected' : '' ?>>CREATE</option>
+                <option value="update"  <?= ($filters['action'] ?? '') === 'update'  ? 'selected' : '' ?>>UPDATE</option>
+                <option value="delete"  <?= ($filters['action'] ?? '') === 'delete'  ? 'selected' : '' ?>>DELETE</option>
+                <option value="restore" <?= ($filters['action'] ?? '') === 'restore' ? 'selected' : '' ?>>RESTORE</option>
             </select>
         </div>
+
         <div class="filter-group">
             <label>Data</label>
             <input type="date" name="date" value="<?= htmlspecialchars((string)($filters['date'] ?? '')) ?>">
         </div>
 
-        <button type="submit" class="btn-filter">Filtrar</button>
-
-        <?php if (!empty(array_filter($filters))): ?>
-            <a href="/bus-companies/logs" class="btn-clear">Limpar</a>
-        <?php endif; ?>
+        <button type="submit">Filtrar</button>
+        <a href="/history" style="padding:8px 12px; color:#555; font-size:13px; align-self:center;">Limpar</a>
     </form>
 
     <div class="card">
         <?php if (empty($logs)): ?>
-            <div style="padding:20px;color: #555;">Nenhum log encontrado.</div>
+            <div style="padding:30px; color:#888; text-align:center;">Nenhum log encontrado.</div>
         <?php else: ?>
             <table>
                 <thead>
                 <tr>
                     <th>ID</th>
-                    <th>ID Usuário</th>
-                    <th>ID Viação</th>
-                    <th>Logo</th>
-                    <th>Viação</th>
+                    <th>Entidade</th>
+                    <th>Nome</th>
+                    <th>Responsável</th>
                     <th>Ação</th>
                     <th>Antes</th>
                     <th>Depois</th>
@@ -101,51 +113,116 @@ $formatLogo = function($path) {
                 </tr>
                 </thead>
                 <tbody>
-                <?php foreach ($logs as $log): ?>
-                    <?php
+                <?php foreach ($logs as $log):
+
                     $old = !empty($log['old_value']) ? json_decode((string)$log['old_value'], true) : null;
                     $new = !empty($log['new_value']) ? json_decode((string)$log['new_value'], true) : null;
+
+                    // Campos a ignorar nas comparações (sem valor visual)
+                    $ignoredKeys = ['password', 'id', 'created_at', 'updated_at'];
+
                     $changes = [];
                     if ($log['action'] === 'update' && is_array($old) && is_array($new)) {
                         foreach ($new as $key => $value) {
-                            if (in_array($key, ['updated_at', 'created_at'])) continue;
-                            $oldValue = $old[$key] ?? null;
-                            if ($oldValue != $value) $changes[$key] = ['old' => $oldValue, 'new' => $value];
+                            if (in_array($key, $ignoredKeys, true)) continue;
+                            if (($old[$key] ?? null) != $value) {
+                                $changes[$key] = ['old' => $old[$key] ?? null, 'new' => $value];
+                            }
                         }
                     }
+
+                    $entityClass = 'entity-' . ($log['entity_type'] ?? '');
+                    $actionClass = 'badge-' . ($log['action'] ?? '');
                     ?>
                     <tr>
-                        <td><?= $log['id'] ?></td>
-                        <td><?= $log['user_id'] ?? '0' ?></td>
-                        <td><?= $log['bus_company_id'] ?? ($new['id'] ?? ($old['id'] ?? '-')) ?></td>
+                        <td><?= (int)$log['id'] ?></td>
+
                         <td>
-                            <?php
-                            $logoField = ($log['action'] === 'delete') ? ($old['logo'] ?? null) : ($new['logo'] ?? ($old['logo'] ?? null));
-                            $logoUrl = $formatLogo($logoField);
-                            ?>
-                            <?php if ($logoUrl): ?>
-                                <img src="<?= $logoUrl ?>" width="45" height="45">
-                            <?php else: ?> - <?php endif; ?>
+                            <span class="badge <?= htmlspecialchars($entityClass) ?>">
+                                <?= htmlspecialchars($log['entity_type'] ?? '-') ?>
+                            </span>
+                            <div style="font-size:11px;color:#aaa;margin-top:2px;">
+                                #<?= (int)($log['entity_id'] ?? 0) ?>
+                            </div>
                         </td>
+
+                        <td><?= htmlspecialchars($log['entity_name'] ?? '-') ?></td>
+
                         <td>
-                            <?php $nome = $log['name'] ?? ($new['name'] ?? ($old['name'] ?? 'Viação Removida')); ?>
-                            <strong><?= htmlspecialchars((string)$nome) ?></strong>
+                            <?php if (!empty($log['user_name'])): ?>
+                                <?= htmlspecialchars($log['user_name']) ?>
+                                <div style="font-size:11px;color:#aaa;">ID <?= (int)$log['user_id'] ?></div>
+                            <?php else: ?>
+                                <span class="empty-dash">-</span>
+                            <?php endif; ?>
                         </td>
-                        <td style="font-weight: bold; color: <?= $log['action'] === 'delete' ? '#dc3545' : ($log['action'] === 'create' ? '#28a745' : '#ffc107') ?>;">
-                            <?= strtoupper($log['action']) ?>
+
+                        <td>
+                            <span class="badge <?= htmlspecialchars($actionClass) ?>">
+                                <?= htmlspecialchars(strtoupper($log['action'] ?? '')) ?>
+                            </span>
                         </td>
+
+                        <!-- ANTES -->
                         <td>
                             <?php if ($log['action'] === 'update' && $changes): ?>
-                                <?php foreach ($changes as $k => $v): ?> <div><small><strong><?= $k ?>:</strong> <?= htmlspecialchars((string)($v['old'] ?? '')) ?></small></div> <?php endforeach; ?>
-                            <?php elseif ($log['action'] === 'delete'): ?> <small style="color:gray">Registro removido</small>
-                            <?php else: ?> - <?php endif; ?>
+                                <?php foreach ($changes as $k => $v): ?>
+                                    <div class="change-row">
+                                        <span class="change-key"><?= htmlspecialchars($k) ?>:</span>
+                                        <?= htmlspecialchars((string)($v['old'] ?? '')) ?>
+                                    </div>
+                                <?php endforeach; ?>
+
+                            <?php elseif ($log['action'] === 'delete' && is_array($old)): ?>
+                                <?php foreach ($old as $k => $v): ?>
+                                    <?php if (in_array($k, $ignoredKeys, true)) continue; ?>
+                                    <div class="change-row">
+                                        <span class="change-key"><?= htmlspecialchars($k) ?>:</span>
+                                        <?= htmlspecialchars((string)$v) ?>
+                                    </div>
+                                <?php endforeach; ?>
+
+                            <?php else: ?>
+                                <span class="empty-dash">-</span>
+                            <?php endif; ?>
                         </td>
+
+                        <!-- DEPOIS -->
                         <td>
                             <?php if ($log['action'] === 'update' && $changes): ?>
-                                <?php foreach ($changes as $k => $v): ?> <div><small><strong><?= $k ?>:</strong> <?= htmlspecialchars((string)($v['new'] ?? '')) ?></small></div> <?php endforeach; ?>
-                            <?php else: ?> - <?php endif; ?>
+                                <?php foreach ($changes as $k => $v): ?>
+                                    <div class="change-row">
+                                        <span class="change-key"><?= htmlspecialchars($k) ?>:</span>
+                                        <?= htmlspecialchars((string)($v['new'] ?? '')) ?>
+                                    </div>
+                                <?php endforeach; ?>
+
+                            <?php elseif ($log['action'] === 'create' && is_array($new)): ?>
+                                <?php foreach ($new as $k => $v): ?>
+                                    <?php if (in_array($k, $ignoredKeys, true)) continue; ?>
+                                    <div class="change-row">
+                                        <span class="change-key"><?= htmlspecialchars($k) ?>:</span>
+                                        <?= htmlspecialchars((string)$v) ?>
+                                    </div>
+                                <?php endforeach; ?>
+
+                            <?php elseif ($log['action'] === 'restore' && is_array($new)): ?>
+                                <?php foreach ($new as $k => $v): ?>
+                                    <?php if (in_array($k, $ignoredKeys, true)) continue; ?>
+                                    <div class="change-row">
+                                        <span class="change-key"><?= htmlspecialchars($k) ?>:</span>
+                                        <?= htmlspecialchars((string)$v) ?>
+                                    </div>
+                                <?php endforeach; ?>
+
+                            <?php else: ?>
+                                <span class="empty-dash">-</span>
+                            <?php endif; ?>
                         </td>
-                        <td style="white-space: nowrap;"><?= date('d/m/Y H:i', strtotime($log['created_at'])) ?></td>
+
+                        <td style="white-space: nowrap;">
+                            <?= date('d/m/Y H:i', strtotime($log['created_at'])) ?>
+                        </td>
                     </tr>
                 <?php endforeach; ?>
                 </tbody>

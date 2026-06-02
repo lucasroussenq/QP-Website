@@ -53,15 +53,37 @@ final class BusCompanyController
 
         $name = (string)($_GET['name'] ?? '');
         $status = (string)($_GET['status'] ?? '');
+        $excluidos = (string)($_GET['excluidos'] ?? '');
 
         View::render('index', [
             'title' => 'Viações',
-            'companies' => $this->service->all($name, $status),
+            'companies' => $this->service->all($name, $status, $excluidos),
             'filterName' => $name,
             'filterStatus' => $status,
+            'filterExcluidos' => $excluidos,
             'busCompanyNamesJson' => json_encode($this->service->allNames())
         ]);
     }
+
+    public function show(int $id): void
+    {
+        $this->checkAdmin();
+
+        $bus_companies = $this->service->find($id);
+        if (!$bus_companies) {
+            View::redirect('/users');
+            return;
+        }
+
+        $logs = $this->service->getLogsForEntity($id);
+
+        View::render('users/show', [
+            'title' => 'bus_companies: ' . $bus_companies->name,
+            'user' => $bus_companies,
+            'logs' => $logs,
+        ]);
+    }
+
 
     public function create(): void
     {
@@ -91,6 +113,21 @@ final class BusCompanyController
             'old' => (array)$company
         ]);
     }
+    public function view(int $id): void
+    {
+        $this->checkAdmin(); // Protegido
+
+        $company = $this->service->find($id);
+        if (!$company) {
+            View::redirect('/bus-companies');
+            return;
+        }
+
+        View::render('view', [
+            'title' => 'View',
+            'company' => $company,
+        ]);
+    }
 
     public function destroy(int $id): void
     {
@@ -107,16 +144,15 @@ final class BusCompanyController
 
         // Captura todos os filtros da URL
         $filters = [
-            'id'        => $_GET['id'] ?? null,
-            'user_id'   => $_GET['user_id'] ?? null,
-            'bus_id'    => $_GET['bus_id'] ?? null,
-            'bus_name'  => $_GET['bus_name'] ?? null,
-            'action'    => $_GET['action'] ?? null,
-            'date'      => $_GET['date'] ?? null,
+            'id' => $_GET['id'] ?? null,
+            'user_id' => $_GET['user_id'] ?? null,
+            'bus_id' => $_GET['bus_id'] ?? null,
+            'bus_name' => $_GET['bus_name'] ?? null,
+            'action' => $_GET['action'] ?? null,
+            'date' => $_GET['date'] ?? null,
         ];
 
         $logs = $this->service->getLogs($filters);
-
         View::render('logs', ['logs' => $logs, 'filters' => $filters]);
     }
 
@@ -236,6 +272,15 @@ final class BusCompanyController
         }
 
         return $_POST['old_logo'] ?? null;
+    }
+
+    public function restore(int $id): void
+    {
+        $this->checkAdmin();
+
+        $this->service->restore($id);
+        View::flash('success', 'Viação restaurada com sucesso.');
+        View::redirect('/bus-companies');
     }
 
 }
